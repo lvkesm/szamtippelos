@@ -7,57 +7,57 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .glass {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(23, 15, 38, 0.6);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans selection:bg-emerald-500 selection:text-slate-950">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans selection:bg-purple-600 selection:text-white">
 
     <!-- HEADER -->
-    <header class="p-4 border-b border-slate-800 text-center glass sticky top-0 z-50">
-        <h1 class="text-2xl font-black tracking-wider bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-            4 JEGYŰ KÓDFEJTŐ
+    <header class="p-4 border-b border-slate-800/80 text-center glass sticky top-0 z-50">
+        <h1 class="text-xl font-bold tracking-wider text-purple-400 uppercase">
+            4 Jegyű Kódfejtő
         </h1>
-        <p class="text-xs text-slate-400 mt-1">Páros kódfejtő játék</p>
+        <p class="text-xs text-slate-400 mt-0.5">Páros kódfejtő játék</p>
     </header>
 
     <!-- MAIN CONTAINER -->
     <main class="flex-1 max-w-md w-full mx-auto p-4 flex flex-col justify-center">
 
         <!-- LOBBY SCREEN -->
-        <div id="lobbyScreen" class="glass rounded-3xl p-6 shadow-2xl space-y-6">
-            <div class="text-center space-y-2">
-                <h2 class="text-xl font-bold text-slate-200">Üdvözöllek!</h2>
-                <p class="text-sm text-slate-400">Adj meg egy nevet a kezdéshez.</p>
+        <div id="lobbyScreen" class="glass rounded-2xl p-6 shadow-2xl space-y-6">
+            <div class="text-center space-y-1">
+                <h2 class="text-lg font-semibold text-slate-200">Üdvözöllek!</h2>
+                <p class="text-xs text-slate-400">Adj meg egy nevet a kezdéshez.</p>
             </div>
 
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">A te neved</label>
                     <input type="text" id="playerName" placeholder="Pl. Levi" maxlength="12"
-                        class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition">
+                        class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-purple-500 transition">
                 </div>
 
                 <div class="pt-2 border-t border-slate-800/80 space-y-3">
                     <button id="createRoomBtn" onclick="createRoom()" 
-                        class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 disabled:opacity-50">
+                        class="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium py-3 px-4 rounded-xl shadow-lg transition active:scale-95 disabled:opacity-50">
                         Új szoba létrehozása
                     </button>
 
-                    <div class="relative flex py-2 items-center">
+                    <div class="relative flex py-1 items-center">
                         <div class="flex-grow border-t border-slate-800"></div>
-                        <span class="flex-shrink mx-4 text-xs text-slate-500 uppercase">vagy</span>
+                        <span class="flex-shrink mx-4 text-xs text-slate-600 uppercase">vagy</span>
                         <div class="flex-grow border-t border-slate-800"></div>
                     </div>
 
                     <div class="flex gap-2">
                         <input type="text" id="roomCodeInput" placeholder="Szobakód" maxlength="6"
-                            class="uppercase w-1/2 bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-3 text-center tracking-widest text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+                            class="uppercase w-1/2 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-center tracking-widest text-slate-100 placeholder-slate-600 focus:outline-none focus:border-purple-500 transition">
                         <button id="joinRoomBtn" onclick="joinRoom()"
-                            class="w-1/2 bg-slate-800 hover:bg-slate-700 text-cyan-400 border border-cyan-500/30 font-bold py-3.5 px-4 rounded-xl transition active:scale-95 disabled:opacity-50">
+                            class="w-1/2 bg-slate-900 hover:bg-slate-800 text-purple-400 border border-purple-500/30 font-medium py-3 px-4 rounded-xl transition active:scale-95 disabled:opacity-50">
                             Csatlakozás
                         </button>
                     </div>
@@ -68,24 +68,24 @@
         </div>
 
         <!-- SETUP SECRET NUMBER SCREEN -->
-        <div id="setupScreen" class="hidden glass rounded-3xl p-6 shadow-2xl space-y-6">
+        <div id="setupScreen" class="hidden glass rounded-2xl p-6 shadow-2xl space-y-6">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <span class="text-xs text-slate-400">Szobakód: <strong id="displayRoomCode" class="text-emerald-400 font-mono text-base">------</strong></span>
-                <span id="playerRoleBadge" class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Játékos</span>
+                <span class="text-xs text-slate-400">Szobakód: <strong id="displayRoomCode" class="text-purple-400 font-mono text-base ml-1">------</strong></span>
+                <span id="playerRoleBadge" class="text-xs px-2.5 py-1 rounded-md bg-slate-900 text-slate-300 border border-slate-800">Játékos</span>
             </div>
 
-            <div class="text-center space-y-2">
-                <h2 class="text-lg font-bold text-slate-200">Állítsd be a titkos számod!</h2>
-                <p class="text-xs text-slate-400">Ezt kell majd az ellenfelednek kitalálnia. (4 különböző számjegy)</p>
+            <div class="text-center space-y-1">
+                <h2 class="text-base font-semibold text-slate-200">Állítsd be a titkos számod!</h2>
+                <p class="text-xs text-slate-400">Ezt kell az ellenfelednek kitalálnia.</p>
             </div>
 
             <div class="space-y-4">
                 <input type="input" id="secretInput" placeholder="1234" maxlength="4" pattern="\d*" inputmode="numeric"
-                    class="w-full text-center text-3xl font-mono tracking-[0.5em] bg-slate-900/90 border border-slate-700 rounded-xl py-4 text-emerald-400 focus:outline-none focus:border-emerald-500 transition">
+                    class="w-full text-center text-2xl font-mono tracking-[0.5em] bg-slate-900 border border-slate-800 rounded-xl py-3.5 text-purple-300 focus:outline-none focus:border-purple-500 transition">
 
                 <button id="confirmSecretBtn" onclick="confirmSecret()"
-                    class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 px-4 rounded-xl transition active:scale-95">
-                    Kész, ez lesz a számom!
+                    class="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium py-3 px-4 rounded-xl transition active:scale-95">
+                    Kész, ez lesz a számom
                 </button>
             </div>
 
@@ -95,23 +95,23 @@
         <!-- GAMEPLAY SCREEN -->
         <div id="gameScreen" class="hidden space-y-4">
             <!-- STATUS CARD -->
-            <div class="glass rounded-2xl p-4 flex justify-between items-center">
+            <div class="glass rounded-xl p-4 flex justify-between items-center">
                 <div class="text-left">
-                    <p class="text-[10px] text-slate-500 uppercase tracking-wider">Ellenfeled</p>
-                    <p id="opponentName" class="font-bold text-slate-200">...</p>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-wider">Ellenfél</p>
+                    <p id="opponentName" class="font-medium text-slate-200 text-sm">...</p>
                 </div>
-                <div id="turnBadge" class="px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 animate-pulse">
+                <div id="turnBadge" class="px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-400 border border-slate-800">
                     Várakozás...
                 </div>
             </div>
 
             <!-- GUESS FORM -->
-            <div id="guessBox" class="glass rounded-2xl p-4 space-y-3">
+            <div id="guessBox" class="glass rounded-xl p-4 space-y-3">
                 <div class="flex gap-2">
                     <input type="input" id="guessInput" placeholder="Tipp..." maxlength="4" pattern="\d*" inputmode="numeric"
-                        class="w-full text-center text-xl font-mono tracking-[0.3em] bg-slate-900 border border-slate-700 rounded-xl py-2.5 text-slate-100 focus:outline-none focus:border-emerald-500 transition">
+                        class="w-full text-center text-lg font-mono tracking-[0.3em] bg-slate-900 border border-slate-800 rounded-xl py-2.5 text-slate-100 focus:outline-none focus:border-purple-500 transition">
                     <button onclick="submitGuess()"
-                        class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition active:scale-95 flex-shrink-0">
+                        class="bg-purple-600 hover:bg-purple-500 text-white font-medium px-5 py-2.5 rounded-xl transition active:scale-95 flex-shrink-0 text-sm">
                         Tippelek
                     </button>
                 </div>
@@ -120,28 +120,35 @@
             <!-- HISTORY LISTS -->
             <div class="grid grid-cols-2 gap-3">
                 <!-- MY GUESSES -->
-                <div class="glass rounded-2xl p-3 flex flex-col h-64">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center pb-2 border-b border-slate-800">Saját tippjeid</h3>
+                <div class="glass rounded-xl p-3 flex flex-col h-64">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 text-center pb-2 border-b border-slate-800/80">Saját tippjeid</h3>
                     <div id="myHistory" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs"></div>
                 </div>
 
                 <!-- OPPONENT GUESSES -->
-                <div class="glass rounded-2xl p-3 flex flex-col h-64">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center pb-2 border-b border-slate-800">Ellenfél tippjei</h3>
+                <div class="glass rounded-xl p-3 flex flex-col h-64">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 text-center pb-2 border-b border-slate-800/80">Ellenfél tippjei</h3>
                     <div id="oppHistory" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs"></div>
                 </div>
             </div>
         </div>
 
         <!-- WIN / LOSE OVERLAY -->
-        <div id="endGameModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
-            <div class="glass rounded-3xl p-6 text-center space-y-4 max-w-xs w-full border border-slate-700 shadow-2xl">
-                <div id="endGameIcon" class="text-5xl">🏆</div>
-                <h2 id="endGameTitle" class="text-2xl font-black text-slate-100">Győzelem!</h2>
+        <div id="endGameModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="glass rounded-2xl p-6 text-center space-y-4 max-w-xs w-full border border-slate-800 shadow-2xl">
+                <h2 id="endGameTitle" class="text-xl font-bold text-slate-100">Játék vége</h2>
                 <p id="endGameDesc" class="text-xs text-slate-400">Sikeresen kitaláltad a számot!</p>
-                <button onclick="location.reload()" class="w-full bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl hover:bg-emerald-400 transition">
-                    Új játék
-                </button>
+                
+                <p id="rematchStatus" class="text-xs text-purple-400 min-h-[1rem]"></p>
+
+                <div class="space-y-2 pt-2">
+                    <button id="rematchBtn" onclick="requestRematch()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium py-2.5 rounded-xl transition text-sm">
+                        Visszavágó
+                    </button>
+                    <button onclick="location.reload()" class="w-full bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 font-medium py-2.5 rounded-xl transition text-sm">
+                        Kilépés
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -149,7 +156,7 @@
 
     <!-- FOOTER -->
     <footer class="p-3 text-center text-[10px] text-slate-600 border-t border-slate-900">
-        4 Jegyű Kódfejtő &bull; Realtime P2P Game
+        4 Jegyű Kódfejtő
     </footer>
 
     <!-- FIREBASE MODULES -->
@@ -158,11 +165,10 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // BEÁLLÍTOTT DATABASE URL-EL!
         const firebaseConfig = {
             apiKey: "AIzaSyDKI3JEJSTqEZP72qadco3xy1AjanXqtuo",
             authDomain: "szamtippelos-jatek.firebaseapp.com",
-            databaseURL: "https://szamtippelos-jatek-default-rtdb.firebaseio.com", // <-- ERRE CSERÉLD KI!
+            databaseURL: "https://szamtippelos-jatek-default-rtdb.firebaseio.com",
             projectId: "szamtippelos-jatek",
             storageBucket: "szamtippelos-jatek.firebasestorage.app",
             messagingSenderId: "125530201262",
@@ -178,20 +184,30 @@
         let currentRoomId = null;
         let myRole = null; // 'p1' vagy 'p2'
 
+        // LOCALSTORAGE NÉV BETÖLTÉSE
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('codebreaker_player_name');
+            if (savedName) {
+                document.getElementById('playerName').value = savedName;
+            }
+        });
+
         // AUTHENTICATION
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                console.log("Bejelentkezve mint:", user.uid);
             } else {
                 signInAnonymously(auth).catch(err => {
                     console.error("Auth hiba:", err);
-                    document.getElementById('lobbyStatus').innerText = "Csatlakozási hiba a szerverhez!";
+                    document.getElementById('lobbyStatus').innerText = "Csatlakozási hiba!";
                 });
             }
         });
 
-        // HELPER FUNCTIONS
+        function savePlayerName(name) {
+            localStorage.setItem('codebreaker_player_name', name);
+        }
+
         function generateRoomCode() {
             return Math.floor(100000 + Math.random() * 900000).toString();
         }
@@ -203,8 +219,10 @@
                 alert("Kérlek adj meg egy nevet!");
                 return;
             }
+            savePlayerName(name);
+
             if (!currentUser) {
-                alert("Még csatlakozik a szerverhez, próbáld újra 2 másodperc múlva!");
+                alert("Még csatlakozik a szerverhez, próbáld újra pár másodperc múlva!");
                 return;
             }
 
@@ -216,8 +234,9 @@
             await set(roomRef, {
                 status: 'waiting',
                 turn: 'p1',
-                p1: { uid: currentUser.uid, name: name, secret: '', ready: false },
-                p2: { uid: '', name: '', secret: '', ready: false }
+                rematch: { p1: false, p2: false },
+                p1: { uid: currentUser.uid, name: name, secret: '', ready: false, guesses: [] },
+                p2: { uid: '', name: '', secret: '', ready: false, guesses: [] }
             });
 
             showSetupScreen(roomId, "Játékos 1 (Hoszt)");
@@ -232,6 +251,8 @@
                 alert("Kérlek add meg a neved és a szobakódot!");
                 return;
             }
+            savePlayerName(name);
+
             if (!currentUser) return;
 
             const roomRef = ref(db, 'rooms/' + code);
@@ -243,7 +264,7 @@
             }
 
             const roomData = snapshot.val();
-            if (roomData.p2.uid !== '') {
+            if (roomData.p2.uid !== '' && roomData.p2.uid !== currentUser.uid) {
                 alert("Ez a szoba már tele van!");
                 return;
             }
@@ -272,7 +293,7 @@
         window.confirmSecret = async function() {
             const secret = document.getElementById('secretInput').value.trim();
             if (secret.length !== 4 || isNaN(secret)) {
-                alert("A titkos számnak pontosan 4 számjegyből kell állnia!");
+                alert("A titkos számnak 4 számjegyből kell állnia!");
                 return;
             }
 
@@ -284,7 +305,18 @@
                 ready: true
             });
 
-            document.getElementById('setupStatus').innerText = "Szám elmentve! Várakozás a másik játékosra...";
+            document.getElementById('setupStatus').innerText = "Szám elmentve. Várakozás a másik játékosra...";
+        };
+
+        // REQUEST REMATCH
+        window.requestRematch = async function() {
+            document.getElementById('rematchBtn').disabled = true;
+            document.getElementById('rematchBtn').classList.add('opacity-50');
+            document.getElementById('rematchStatus').innerText = "Visszavágó kérve. Várakozás az ellenfélre...";
+
+            await update(ref(db, `rooms/${currentRoomId}/rematch`), {
+                [myRole]: true
+            });
         };
 
         // LISTEN TO ROOM CHANGES
@@ -293,6 +325,45 @@
             onValue(roomRef, (snapshot) => {
                 const data = snapshot.val();
                 if (!data) return;
+
+                // VISSZAVÁGÓ LOGIKA (Ha mindkét játékos elfogadta)
+                if (data.rematch && data.rematch.p1 && data.rematch.p2) {
+                    // Alaphelyzetbe állítjuk a szobát
+                    update(ref(db, `rooms/${currentRoomId}`), {
+                        status: 'setup',
+                        turn: 'p1',
+                        winner: null,
+                        rematch: { p1: false, p2: false },
+                        'p1/secret': '',
+                        'p1/ready': false,
+                        'p1/guesses': [],
+                        'p2/secret': '',
+                        'p2/ready': false,
+                        'p2/guesses': []
+                    });
+
+                    // UI visszaállítása a Setup képernyőre
+                    document.getElementById('endGameModal').classList.add('hidden');
+                    document.getElementById('gameScreen').classList.add('hidden');
+                    document.getElementById('setupScreen').classList.remove('hidden');
+                    
+                    document.getElementById('secretInput').value = '';
+                    document.getElementById('confirmSecretBtn').disabled = false;
+                    document.getElementById('confirmSecretBtn').classList.remove('opacity-50');
+                    document.getElementById('rematchBtn').disabled = false;
+                    document.getElementById('rematchBtn').classList.remove('opacity-50');
+                    document.getElementById('rematchStatus').innerText = '';
+                    document.getElementById('setupStatus').innerText = 'Új kör! Állítsd be az új számod.';
+                    return;
+                }
+
+                // Visszavágó jelzés ha a másik fél már kért
+                if (data.rematch) {
+                    const opponentRole = myRole === 'p1' ? 'p2' : 'p1';
+                    if (data.rematch[opponentRole] && !data.rematch[myRole]) {
+                        document.getElementById('rematchStatus').innerText = "Az ellenfeled visszavágót kér!";
+                    }
+                }
 
                 // Mindkét játékos megadta a számát -> Indul a játék!
                 if (data.p1.ready && data.p2.ready && data.status !== 'playing' && data.status !== 'ended') {
@@ -312,12 +383,12 @@
                     const guessBox = document.getElementById('guessBox');
 
                     if (isMyTurn) {
-                        turnBadge.innerText = "TE KÖVETKEZEL!";
-                        turnBadge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse";
+                        turnBadge.innerText = "TE KÖVETKEZEL";
+                        turnBadge.className = "px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/40";
                         guessBox.classList.remove('opacity-40', 'pointer-events-none');
                     } else {
-                        turnBadge.innerText = "ELLENFÉL JÖN...";
-                        turnBadge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30";
+                        turnBadge.innerText = "ELLENFÉL JÖN";
+                        turnBadge.className = "px-3 py-1 rounded-full text-xs font-medium bg-slate-900 text-slate-500 border border-slate-800";
                         guessBox.classList.add('opacity-40', 'pointer-events-none');
                     }
 
@@ -331,18 +402,15 @@
                     const modal = document.getElementById('endGameModal');
                     const title = document.getElementById('endGameTitle');
                     const desc = document.getElementById('endGameDesc');
-                    const icon = document.getElementById('endGameIcon');
 
                     modal.classList.remove('hidden');
                     if (data.winner === myRole) {
-                        icon.innerText = "🏆";
-                        title.innerText = "GYŐZELEM!";
-                        title.className = "text-2xl font-black text-emerald-400";
-                        desc.innerText = "Kitaláltad az ellenfél számát!";
+                        title.innerText = "Győzelem!";
+                        title.className = "text-xl font-bold text-purple-400";
+                        desc.innerText = "Sikeresen kitaláltad az ellenfél számát!";
                     } else {
-                        icon.innerText = "💀";
-                        title.innerText = "VESZTETTÉL!";
-                        title.className = "text-2xl font-black text-rose-500";
+                        title.innerText = "Vesztettél";
+                        title.className = "text-xl font-bold text-rose-400";
                         desc.innerText = "Az ellenfeled hamarabb kitalálta a számodat.";
                     }
                 }
@@ -366,16 +434,16 @@
             const opponentRole = myRole === 'p1' ? 'p2' : 'p1';
             const targetSecret = data[opponentRole].secret;
 
-            // KIÉRTÉKELÉS (Melyik számjegy van jó helyen)
+            // KIÉRTÉKELÉS
             let resultHtml = "";
             let correctCount = 0;
 
             for (let i = 0; i < 4; i++) {
                 if (guess[i] === targetSecret[i]) {
-                    resultHtml += `<span class="text-emerald-400 font-bold">${guess[i]}</span>`;
+                    resultHtml += `<span class="text-purple-400 font-bold">${guess[i]}</span>`;
                     correctCount++;
                 } else {
-                    resultHtml += `<span class="text-slate-500">${guess[i]}</span>`;
+                    resultHtml += `<span class="text-slate-600">${guess[i]}</span>`;
                 }
             }
 
@@ -402,7 +470,7 @@
             
             guesses.forEach((g) => {
                 const div = document.createElement('div');
-                div.className = "flex justify-between items-center bg-slate-900/60 p-2 rounded-lg border border-slate-800/80 font-mono tracking-widest";
+                div.className = "flex justify-between items-center bg-slate-900/80 p-2 rounded-lg border border-slate-800/80 font-mono tracking-widest text-center justify-center";
                 div.innerHTML = g.formatted;
                 container.appendChild(div);
             });
