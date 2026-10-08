@@ -1,0 +1,1052 @@
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>4 Jegyű Kódfejtő - Online 2-Játékos Számkitalálós</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Google Fonts Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Canvas Confetti for Victory celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: radial-gradient(circle at top left, #0f172a, #020617);
+        min-height: 100vh;
+        color: #f8fafc;
+      }
+
+      .glass-panel {
+        background: rgba(30, 41, 59, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      }
+
+      .glass-input {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        transition: all 0.3s ease;
+      }
+
+      .glass-input:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      }
+
+      .glow-btn-primary {
+        background: linear-gradient(135deg, #10b981, #059669);
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .glow-btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+      }
+
+      .glow-btn-primary:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      .glow-btn-secondary {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .glow-btn-secondary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+      }
+
+      .digit-box {
+        transition: all 0.3s ease;
+      }
+
+      .digit-match {
+        background: linear-gradient(135deg, #10b981, #047857) !important;
+        border-color: #34d399 !important;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+        color: white;
+      }
+
+      .digit-neutral {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #94a3b8;
+      }
+
+      .pulse-turn {
+        animation: pulseGlow 2s infinite ease-in-out;
+      }
+
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+        50% {
+          box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+        }
+      }
+
+      /* Hide scrollbars for slick look */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.5);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 999px;
+      }
+    </style>
+  </head>
+  <body
+    class="flex flex-col min-h-screen p-3 md:p-6 justify-between items-center relative overflow-x-hidden"
+  >
+    <!-- App Header -->
+    <header class="w-full max-w-md text-center my-3 relative z-10">
+      <div
+        class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 mb-2"
+      >
+        <i class="fa-solid fa-gamepad text-emerald-400"></i>
+        <span
+          class="text-xs uppercase tracking-widest font-semibold text-emerald-400"
+          >Páros Kódfejtő</span
+        >
+      </div>
+      <h1
+        class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-indigo-400"
+      >
+        4 Jegyű Számkitalálós
+      </h1>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-md my-auto relative z-10">
+      <!-- LOBBY SCREEN -->
+      <section id="lobby-screen" class="glass-panel p-6 rounded-3xl space-y-6">
+        <div class="text-center space-y-2">
+          <h2 class="text-xl font-bold text-slate-100">Játék Indítása</h2>
+          <p class="text-sm text-slate-400">
+            Hozz létre egy új szobát vagy csatlakozz a barátodhoz!
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <button
+            id="btn-create-room"
+            class="w-full py-4 px-6 rounded-2xl glow-btn-primary font-bold text-lg flex items-center justify-center gap-3"
+          >
+            <i class="fa-solid fa-plus-circle text-xl"></i>
+            Új Szoba Létrehozása
+          </button>
+
+          <div class="relative flex py-2 items-center">
+            <div class="flex-grow border-t border-slate-700"></div>
+            <span
+              class="flex-shrink mx-4 text-xs font-semibold uppercase text-slate-500"
+              >VAGY</span
+            >
+            <div class="flex-grow border-t border-slate-700"></div>
+          </div>
+
+          <div class="space-y-3">
+            <label
+              for="input-room-code"
+              class="block text-xs font-medium uppercase tracking-wider text-slate-400"
+              >Szobakód Beírása</label
+            >
+            <div class="flex gap-2">
+              <input
+                type="text"
+                id="input-room-code"
+                placeholder="pld: 4829"
+                maxlength="6"
+                class="glass-input w-full px-4 py-3 text-center text-xl tracking-widest font-mono uppercase rounded-xl uppercase"
+              />
+              <button
+                id="btn-join-room"
+                class="px-6 py-3 rounded-xl glow-btn-secondary font-bold text-slate-100 flex items-center gap-2"
+              >
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Belépés
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rules Quick Info -->
+        <div
+          class="p-4 rounded-2xl bg-slate-900/50 border border-slate-800 text-xs text-slate-400 space-y-2"
+        >
+          <p class="font-semibold text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-emerald-400"></i> Hogyan
+            működik?
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-slate-400">
+            <li>Mindketten megadtok egy titkos 4 jegyű számot.</li>
+            <li>Felváltva tippeltek egymás kódjára.</li>
+            <li>
+              Ha egy számjegy
+              <span class="text-emerald-400 font-bold">jó helyen</span> van,
+              zöld színre vált!
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- WAITING / SECRET SELECTION SCREEN -->
+      <section
+        id="setup-screen"
+        class="glass-panel p-6 rounded-3xl space-y-6 hidden"
+      >
+        <div
+          class="flex justify-between items-center pb-3 border-b border-slate-700/60"
+        >
+          <div>
+            <span class="text-xs uppercase text-slate-400 font-medium"
+              >Szobakód</span
+            >
+            <div class="flex items-center gap-2">
+              <h3
+                id="display-room-code"
+                class="text-2xl font-mono font-bold text-emerald-400 tracking-wider"
+              >
+                ----
+              </h3>
+              <button
+                id="btn-copy-code"
+                class="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+              >
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+          <div
+            id="player-role-badge"
+            class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+          >
+            Játékos 1
+          </div>
+        </div>
+
+        <!-- Secret Setup Form -->
+        <div id="secret-form-box" class="space-y-4">
+          <div class="text-center space-y-1">
+            <h2 class="text-lg font-bold text-slate-100">
+              Add meg a Titkos Számodat!
+            </h2>
+            <p class="text-xs text-slate-400">
+              Ezt a 4 jegyű számot kell a másiknak kitalálnia.
+            </p>
+          </div>
+
+          <div class="flex justify-center my-4">
+            <input
+              type="password"
+              id="input-secret-number"
+              maxlength="4"
+              placeholder="••••"
+              pattern="[0-9]*"
+              inputmode="numeric"
+              class="glass-input text-center text-3xl tracking-[1rem] font-mono py-3 px-6 rounded-2xl w-56 text-emerald-400 font-bold"
+            />
+          </div>
+
+          <button
+            id="btn-submit-secret"
+            class="w-full py-4 rounded-2xl glow-btn-primary font-bold text-lg flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-lock"></i>
+            Kész! Szám Elmentése
+          </button>
+        </div>
+
+        <!-- Waiting Indicator -->
+        <div
+          id="waiting-status-box"
+          class="hidden p-6 rounded-2xl bg-slate-900/60 border border-slate-800 text-center space-y-3"
+        >
+          <div class="inline-block animate-spin text-emerald-400 text-3xl my-1">
+            <i class="fa-solid fa-circle-notch"></i>
+          </div>
+          <h3
+            id="waiting-status-title"
+            class="text-base font-bold text-slate-200"
+          >
+            Várakozás a másik játékosra...
+          </h3>
+          <p id="waiting-status-sub" class="text-xs text-slate-400">
+            Amint a másodállású ellenfél is beírja a számát, a játék
+            automatikusan elindul.
+          </p>
+        </div>
+      </section>
+
+      <!-- GAMEPLAY SCREEN -->
+      <section
+        id="game-screen"
+        class="glass-panel p-5 rounded-3xl space-y-5 hidden"
+      >
+        <!-- Game Status Header -->
+        <div
+          class="flex items-center justify-between pb-3 border-b border-slate-700/60"
+        >
+          <div class="space-y-0.5">
+            <span
+              id="turn-badge"
+              class="px-3 py-1 rounded-full text-xs font-bold transition-all duration-300 inline-block"
+            >
+              Soron következő...
+            </span>
+            <p id="opponent-status" class="text-xs text-slate-400 font-medium">
+              Ellenfél titka: <span class="font-mono text-slate-200">••••</span>
+            </p>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] uppercase text-slate-400"
+              >Saját titkod</span
+            >
+            <p
+              id="my-secret-display"
+              class="text-sm font-mono font-bold text-emerald-400"
+            >
+              ----
+            </p>
+          </div>
+        </div>
+
+        <!-- Guess Input Box -->
+        <div
+          id="guess-input-container"
+          class="space-y-3 p-4 rounded-2xl bg-slate-900/60 border border-slate-800"
+        >
+          <label
+            class="block text-xs font-semibold uppercase tracking-wider text-slate-300 text-center"
+          >
+            Tippelj az ellenfél számára!
+          </label>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              id="input-guess-number"
+              maxlength="4"
+              placeholder="1234"
+              pattern="[0-9]*"
+              inputmode="numeric"
+              class="glass-input w-full text-center text-2xl font-mono tracking-[0.5rem] py-2.5 rounded-xl text-white font-bold"
+            />
+            <button
+              id="btn-submit-guess"
+              class="px-6 rounded-xl glow-btn-primary font-bold text-sm whitespace-nowrap"
+            >
+              Tippelés!
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabs / Toggle History -->
+        <div
+          class="flex rounded-xl bg-slate-900/80 p-1 border border-slate-800 text-xs font-semibold"
+        >
+          <button
+            id="tab-my-guesses"
+            class="flex-1 py-2 rounded-lg text-center bg-slate-800 text-emerald-400 shadow"
+          >
+            Saját tippjeim
+          </button>
+          <button
+            id="tab-opp-guesses"
+            class="flex-1 py-2 rounded-lg text-center text-slate-400 hover:text-slate-200"
+          >
+            Ellenfél tippjei
+          </button>
+        </div>
+
+        <!-- Guess History Logs -->
+        <div class="space-y-2">
+          <div
+            id="my-history-list"
+            class="space-y-2 max-h-56 overflow-y-auto pr-1"
+          >
+            <p class="text-xs text-center text-slate-500 py-4">
+              Még nem adtál le tippet.
+            </p>
+          </div>
+          <div
+            id="opp-history-list"
+            class="space-y-2 max-h-56 overflow-y-auto pr-1 hidden"
+          >
+            <p class="text-xs text-center text-slate-500 py-4">
+              Az ellenfél még nem tippelt.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VICTORY / OVER MODAL -->
+      <section
+        id="victory-screen"
+        class="glass-panel p-6 rounded-3xl space-y-6 text-center hidden"
+      >
+        <div
+          class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 mx-auto flex items-center justify-center text-3xl"
+        >
+          <i class="fa-solid fa-trophy animate-bounce"></i>
+        </div>
+
+        <div class="space-y-2">
+          <h2
+            id="victory-title"
+            class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200"
+          >
+            Győzelem!
+          </h2>
+          <p id="victory-sub" class="text-sm text-slate-300">
+            Kitaláltad az ellenfeled 4-jegyű kódját!
+          </p>
+        </div>
+
+        <div
+          class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2 text-xs"
+        >
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400">Nyertes kód:</span>
+            <span
+              id="victory-target-code"
+              class="font-mono font-bold text-emerald-400"
+              >----</span
+            >
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Összes tipp száma:</span>
+            <span
+              id="victory-turns-count"
+              class="font-mono font-bold text-slate-200"
+              >0</span
+            >
+          </div>
+        </div>
+
+        <button
+          id="btn-play-again"
+          class="w-full py-4 rounded-2xl glow-btn-primary font-bold text-base flex items-center justify-center gap-2"
+        >
+          <i class="fa-solid fa-rotate-right"></i>
+          Új Játék Ugyanebben a Szobában
+        </button>
+      </section>
+    </main>
+
+    <!-- Custom Toast Message Notification -->
+    <div
+      id="toast-message"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-full bg-slate-800/95 border border-slate-700 text-xs text-slate-200 shadow-2xl flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none z-50"
+    >
+      <i id="toast-icon" class="fa-solid fa-circle-info text-emerald-400"></i>
+      <span id="toast-text">Értesítés</span>
+    </div>
+
+    <!-- Footer -->
+    <footer
+      class="w-full max-w-md text-center my-4 text-xs text-slate-500 relative z-10"
+    >
+      4 Jegyű Kódfejtő &bull; Valós Idejű Páros Játék
+    </footer>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInAnonymously,
+        signInWithCustomToken,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDoc,
+        onSnapshot,
+        updateDoc,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      // Firebase Configuration setup
+      const appId =
+        typeof __app_id !== "undefined" ? __app_id : "szamkitalalo-default-app";
+      const firebaseConfig =
+        typeof __firebase_config !== "undefined"
+          ? JSON.parse(__firebase_config)
+          : {
+              apiKey: "AIzaSyDKI3JEJSTqEZP72qadco3xy1AjanXqtuo",
+              authDomain: "szamtippelos-jatek.firebaseapp.com",
+              projectId: "szamtippelos-jatek",
+              storageBucket: "szamtippelos-jatek.firebasestorage.app",
+              messagingSenderId: "125530201262",
+              appId: "1:125530201262:web:e0cfa1a03681c66e12213f"
+            };
+
+      // Initialize Firebase SDK
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // App State
+      let currentUser = null;
+      let currentRoomId = null;
+      let myRole = null; // 'p1' or 'p2'
+      let roomData = null;
+      let unsubscribeRoom = null;
+
+      // UI DOM Elements
+      const screens = {
+        lobby: document.getElementById("lobby-screen"),
+        setup: document.getElementById("setup-screen"),
+        game: document.getElementById("game-screen"),
+        victory: document.getElementById("victory-screen"),
+      };
+
+      const inputs = {
+        roomCode: document.getElementById("input-room-code"),
+        secretNumber: document.getElementById("input-secret-number"),
+        guessNumber: document.getElementById("input-guess-number"),
+      };
+
+      // Authenticate User immediately on startup
+      async function initAuth() {
+        try {
+          if (
+            typeof __initial_auth_token !== "undefined" &&
+            __initial_auth_token
+          ) {
+            const credential = await signInWithCustomToken(
+              auth,
+              __initial_auth_token,
+            );
+            currentUser = credential.user;
+          } else {
+            const credential = await signInAnonymously(auth);
+            currentUser = credential.user;
+          }
+
+          // Check if URL has a room code parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const roomParam = urlParams.get("room");
+          if (roomParam && roomParam.length === 4) {
+            inputs.roomCode.value = roomParam;
+            joinRoom(roomParam.toUpperCase());
+          }
+        } catch (err) {
+          console.error("Auth initialization error:", err);
+          showToast("Sikertelen kapcsolódás a szerverhez!", true);
+        }
+      }
+
+      initAuth();
+
+      function showScreen(screenKey) {
+        Object.keys(screens).forEach((key) => {
+          if (key === screenKey) {
+            screens[key].classList.remove("hidden");
+          } else {
+            screens[key].classList.add("hidden");
+          }
+        });
+      }
+
+      function showToast(message, isError = false) {
+        const toast = document.getElementById("toast-message");
+        const toastText = document.getElementById("toast-text");
+        const toastIcon = document.getElementById("toast-icon");
+
+        toastText.textContent = message;
+        if (isError) {
+          toastIcon.className = "fa-solid fa-circle-exclamation text-rose-400";
+        } else {
+          toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+        }
+
+        toast.classList.remove("opacity-0", "pointer-events-none");
+        setTimeout(() => {
+          toast.classList.add("opacity-0", "pointer-events-none");
+        }, 3000);
+      }
+
+      // Random 4-digit code generator for rooms
+      function generateRoomCode() {
+        return Math.floor(1000 + Math.random() * 9000).toString();
+      }
+
+      function getRoomDocRef(roomId) {
+        // Mandatory RULE 1 path for public data: /artifacts/{appId}/public/data/{collectionName}/{docId}
+        return doc(db, "artifacts", appId, "public", "data", "rooms", roomId);
+      }
+
+      // Create Room Event
+      document
+        .getElementById("btn-create-room")
+        .addEventListener("click", async () => {
+          if (!currentUser) return;
+
+          const code = generateRoomCode();
+          const roomRef = getRoomDocRef(code);
+
+          const initialRoomState = {
+            code: code,
+            status: "waiting", // 'waiting', 'setup', 'playing', 'finished'
+            p1: { uid: currentUser.uid, secret: null, guesses: [] },
+            p2: { uid: null, secret: null, guesses: [] },
+            currentTurn: "p1",
+            winner: null,
+            createdAt: Date.now(),
+          };
+
+          try {
+            await setDoc(roomRef, initialRoomState);
+            myRole = "p1";
+            currentRoomId = code;
+            subscribeToRoom(code);
+            showScreen("setup");
+          } catch (err) {
+            console.error("Error creating room:", err);
+            showToast("Nem sikerült létrehozni a szobát!", true);
+          }
+        });
+
+      // Join Room Event
+      document.getElementById("btn-join-room").addEventListener("click", () => {
+        const code = inputs.roomCode.value.trim();
+        if (code.length < 4) {
+          showToast("Kérjük adj meg egy érvényes szobakódot!", true);
+          return;
+        }
+        joinRoom(code);
+      });
+
+      async function joinRoom(code) {
+        if (!currentUser) return;
+        const roomRef = getRoomDocRef(code);
+
+        try {
+          const snap = await getDoc(roomRef);
+          if (!snap.exists()) {
+            showToast("Ez a szoba nem létezik!", true);
+            return;
+          }
+
+          const data = snap.data();
+
+          // Determine role
+          if (data.p1.uid === currentUser.uid) {
+            myRole = "p1";
+          } else if (data.p2.uid === currentUser.uid) {
+            myRole = "p2";
+          } else if (!data.p2.uid) {
+            // Join as player 2
+            myRole = "p2";
+            await updateDoc(roomRef, {
+              "p2.uid": currentUser.uid,
+              status: "setup",
+            });
+          } else {
+            showToast("Ez a szoba már megtelt!", true);
+            return;
+          }
+
+          currentRoomId = code;
+          subscribeToRoom(code);
+          showScreen("setup");
+        } catch (err) {
+          console.error("Error joining room:", err);
+          showToast("Hiba történt a csatlakozáskor!", true);
+        }
+      }
+
+      function subscribeToRoom(code) {
+        if (unsubscribeRoom) unsubscribeRoom();
+
+        const roomRef = getRoomDocRef(code);
+
+        // Mandatory RULE: Always include error callback in onSnapshot
+        unsubscribeRoom = onSnapshot(
+          roomRef,
+          (snapshot) => {
+            if (!snapshot.exists()) {
+              showToast("A szoba megszűnt.", true);
+              showScreen("lobby");
+              return;
+            }
+
+            roomData = snapshot.data();
+            renderRoomState();
+          },
+          (error) => {
+            console.error("Realtime subscription error:", error);
+            showToast("Megszakadt a kapcsolat a szobával!", true);
+          },
+        );
+      }
+
+      function renderRoomState() {
+        if (!roomData) return;
+
+        // Update UI displays
+        document.getElementById("display-room-code").textContent =
+          roomData.code;
+        document.getElementById("player-role-badge").textContent =
+          myRole === "p1" ? "Játékos 1 (Házigazda)" : "Játékos 2 (Vendég)";
+
+        const mySecret = roomData[myRole].secret;
+        const oppRole = myRole === "p1" ? "p2" : "p1";
+        const oppSecret = roomData[oppRole].secret;
+
+        // Handle Screen Transitions based on Status & Secret Submissions
+        if (roomData.status === "finished") {
+          renderVictoryScreen();
+          showScreen("victory");
+          return;
+        }
+
+        if (!mySecret) {
+          // Secret needs to be entered
+          document.getElementById("secret-form-box").classList.remove("hidden");
+          document.getElementById("waiting-status-box").classList.add("hidden");
+          showScreen("setup");
+        } else if (!oppSecret || !roomData.p2.uid) {
+          // I submitted secret, waiting for opponent
+          document.getElementById("secret-form-box").classList.add("hidden");
+          document
+            .getElementById("waiting-status-box")
+            .classList.remove("hidden");
+
+          if (!roomData.p2.uid) {
+            document.getElementById("waiting-status-title").textContent =
+              "Várakozás az ellenfélre...";
+            document.getElementById("waiting-status-sub").textContent =
+              `Oszd meg a szobakódot (${roomData.code}) a másikkal!`;
+          } else {
+            document.getElementById("waiting-status-title").textContent =
+              "Ellenfél a titkos számon gondolkodik...";
+            document.getElementById("waiting-status-sub").textContent =
+              "Amint megadja a kódját, a játék azonnal elindul!";
+          }
+          showScreen("setup");
+        } else {
+          // Both secrets entered & game active
+          showScreen("game");
+          renderGameplayUI();
+        }
+      }
+
+      document
+        .getElementById("btn-submit-secret")
+        .addEventListener("click", async () => {
+          const secretVal = inputs.secretNumber.value.trim();
+          if (secretVal.length !== 4 || !/^\d{4}$/.test(secretVal)) {
+            showToast("Kérjük pontosan 4 számjegyet adj meg!", true);
+            return;
+          }
+
+          if (!currentRoomId || !myRole) return;
+
+          const roomRef = getRoomDocRef(currentRoomId);
+          try {
+            const updateObj = {};
+            updateObj[`${myRole}.secret`] = secretVal;
+
+            // Check if opp also ready
+            const oppRole = myRole === "p1" ? "p2" : "p1";
+            if (roomData[oppRole] && roomData[oppRole].secret) {
+              updateObj.status = "playing";
+            }
+
+            await updateDoc(roomRef, updateObj);
+            showToast("Titkos szám elmentve!");
+          } catch (err) {
+            console.error("Error submitting secret:", err);
+            showToast("Nem sikerült elmenteni a titkos számot!", true);
+          }
+        });
+
+      function renderGameplayUI() {
+        const oppRole = myRole === "p1" ? "p2" : "p1";
+
+        // Display My Secret
+        document.getElementById("my-secret-display").textContent =
+          roomData[myRole].secret || "----";
+
+        // Turn Indicator
+        const turnBadge = document.getElementById("turn-badge");
+        const isMyTurn = roomData.currentTurn === myRole;
+
+        if (isMyTurn) {
+          turnBadge.textContent = "A te tippelési sorod van!";
+          turnBadge.className =
+            "px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 pulse-turn";
+          document
+            .getElementById("guess-input-container")
+            .classList.remove("opacity-50", "pointer-events-none");
+        } else {
+          turnBadge.textContent = "Az ellenfél gondolkodik...";
+          turnBadge.className =
+            "px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700";
+          document
+            .getElementById("guess-input-container")
+            .classList.add("opacity-50", "pointer-events-none");
+        }
+
+        // Render History Lists
+        renderHistoryList(
+          "my-history-list",
+          roomData[myRole].guesses || [],
+          roomData[oppRole].secret,
+        );
+        renderHistoryList(
+          "opp-history-list",
+          roomData[oppRole].guesses || [],
+          roomData[myRole].secret,
+        );
+      }
+
+      // Compares guess with target secret and returns feedback details per position
+      function evaluateGuess(guessStr, secretStr) {
+        const result = [];
+        for (let i = 0; i < 4; i++) {
+          const guessDigit = guessStr[i];
+          const secretDigit = secretStr[i];
+          const isExactMatch = guessDigit === secretDigit;
+
+          result.push({
+            digit: guessDigit,
+            isExact: isExactMatch,
+          });
+        }
+        return result;
+      }
+
+      function renderHistoryList(containerId, guesses, targetSecret) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        if (!guesses || guesses.length === 0) {
+          container.innerHTML = `<p class="text-xs text-center text-slate-500 py-4">Még nincs leadott tipp.</p>`;
+          return;
+        }
+
+        // Reverse order so newest guesses appear at the top
+        [...guesses].reverse().forEach((guessItem, idx) => {
+          const guessNum = guessItem.guess;
+          const feedback = evaluateGuess(guessNum, targetSecret);
+          const exactCount = feedback.filter((f) => f.isExact).length;
+
+          const row = document.createElement("div");
+          row.className =
+            "flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-slate-700 transition";
+
+          // Digit Boxes
+          let digitsHTML = '<div class="flex gap-1.5">';
+          feedback.forEach((f) => {
+            if (f.isExact) {
+              digitsHTML += `
+                            <div class="w-8 h-8 rounded-lg digit-match font-mono font-bold flex items-center justify-center text-sm relative">
+                                ${f.digit}
+                                <i class="fa-solid fa-check text-[9px] absolute top-0.5 right-0.5 opacity-80"></i>
+                            </div>`;
+            } else {
+              digitsHTML += `
+                            <div class="w-8 h-8 rounded-lg digit-neutral font-mono font-bold flex items-center justify-center text-sm">
+                                ${f.digit}
+                            </div>`;
+            }
+          });
+          digitsHTML += "</div>";
+
+          // Status Badge
+          let badgeHTML = "";
+          if (exactCount === 4) {
+            badgeHTML = `<span class="text-xs font-bold text-emerald-400 bg-emerald-500/20 px-2.5 py-1 rounded-lg border border-emerald-500/30">Telitalálat!</span>`;
+          } else {
+            badgeHTML = `<span class="text-xs text-slate-400 font-mono"><strong class="text-emerald-400">${exactCount}</strong> jó helyen</span>`;
+          }
+
+          row.innerHTML = `
+                    ${digitsHTML}
+                    <div class="text-right">
+                        ${badgeHTML}
+                        <div class="text-[10px] text-slate-500">#${guesses.length - idx} tipp</div>
+                    </div>
+                `;
+
+          container.appendChild(row);
+        });
+      }
+
+      document
+        .getElementById("btn-submit-guess")
+        .addEventListener("click", async () => {
+          if (roomData.currentTurn !== myRole) {
+            showToast("Most az ellenfeled köre van!", true);
+            return;
+          }
+
+          const guessVal = inputs.guessNumber.value.trim();
+          if (guessVal.length !== 4 || !/^\d{4}$/.test(guessVal)) {
+            showToast("Kérjük adj meg egy 4 jegyű tippet!", true);
+            return;
+          }
+
+          const oppRole = myRole === "p1" ? "p2" : "p1";
+          const oppSecret = roomData[oppRole].secret;
+
+          // Check if win
+          const isWinner = guessVal === oppSecret;
+          const updatedGuesses = [
+            ...(roomData[myRole].guesses || []),
+            { guess: guessVal, time: Date.now() },
+          ];
+
+          const roomRef = getRoomDocRef(currentRoomId);
+
+          try {
+            const updateObj = {};
+            updateObj[`${myRole}.guesses`] = updatedGuesses;
+
+            if (isWinner) {
+              updateObj.status = "finished";
+              updateObj.winner = myRole;
+            } else {
+              // Switch turn
+              updateObj.currentTurn = oppRole;
+            }
+
+            inputs.guessNumber.value = "";
+            await updateDoc(roomRef, updateObj);
+
+            if (isWinner) {
+              confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 },
+              });
+            }
+          } catch (err) {
+            console.error("Error submitting guess:", err);
+            showToast("Nem sikerült beküldeni a tippet!", true);
+          }
+        });
+
+      function renderVictoryScreen() {
+        const isWinner = roomData.winner === myRole;
+        const victoryTitle = document.getElementById("victory-title");
+        const victorySub = document.getElementById("victory-sub");
+        const victoryTarget = document.getElementById("victory-target-code");
+        const victoryTurns = document.getElementById("victory-turns-count");
+
+        const oppRole = myRole === "p1" ? "p2" : "p1";
+
+        if (isWinner) {
+          victoryTitle.textContent = "🎉 Győzelem!";
+          victoryTitle.className =
+            "text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200";
+          victorySub.textContent =
+            "Gratulálunk! Sikerült elsőként kitalálnod a kódot!";
+          victoryTarget.textContent = roomData[oppRole].secret;
+          victoryTurns.textContent = (roomData[myRole].guesses || []).length;
+          confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+        } else {
+          victoryTitle.textContent = "😔 Vesztettél!";
+          victoryTitle.className =
+            "text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-300";
+          victorySub.textContent =
+            "Az ellenfél gyorsabb volt és kitalálta a számodat.";
+          victoryTarget.textContent = roomData[myRole].secret;
+          victoryTurns.textContent = (roomData[oppRole].guesses || []).length;
+        }
+      }
+
+      // Play Again in Same Room
+      document
+        .getElementById("btn-play-again")
+        .addEventListener("click", async () => {
+          if (!currentRoomId) return;
+
+          const roomRef = getRoomDocRef(currentRoomId);
+          try {
+            await updateDoc(roomRef, {
+              status: "setup",
+              "p1.secret": null,
+              "p1.guesses": [],
+              "p2.secret": null,
+              "p2.guesses": [],
+              currentTurn: "p1",
+              winner: null,
+            });
+            inputs.secretNumber.value = "";
+          } catch (err) {
+            console.error("Error resetting game:", err);
+            showToast("Nem sikerült új játékot indítani!", true);
+          }
+        });
+
+      // Tab Switching for Guess History
+      document
+        .getElementById("tab-my-guesses")
+        .addEventListener("click", (e) => {
+          e.target.className =
+            "flex-1 py-2 rounded-lg text-center bg-slate-800 text-emerald-400 shadow";
+          document.getElementById("tab-opp-guesses").className =
+            "flex-1 py-2 rounded-lg text-center text-slate-400 hover:text-slate-200";
+          document.getElementById("my-history-list").classList.remove("hidden");
+          document.getElementById("opp-history-list").classList.add("hidden");
+        });
+
+      document
+        .getElementById("tab-opp-guesses")
+        .addEventListener("click", (e) => {
+          e.target.className =
+            "flex-1 py-2 rounded-lg text-center bg-slate-800 text-emerald-400 shadow";
+          document.getElementById("tab-my-guesses").className =
+            "flex-1 py-2 rounded-lg text-center text-slate-400 hover:text-slate-200";
+          document
+            .getElementById("opp-history-list")
+            .classList.remove("hidden");
+          document.getElementById("my-history-list").classList.add("hidden");
+        });
+
+      // Copy Room Code
+      document.getElementById("btn-copy-code").addEventListener("click", () => {
+        if (!currentRoomId) return;
+        const textToCopy = currentRoomId;
+
+        // Fallback execCommand for iFrame context compatibility
+        const tempInput = document.createElement("input");
+        tempInput.value = textToCopy;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+
+        showToast("Szobakód másolva a vágólapra!");
+      });
+    </script>
+  </body>
+</html>
